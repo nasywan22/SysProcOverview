@@ -21,7 +21,9 @@ void fetch_binary_info(const char *pid_p_path) {
   unsigned int bytes = 0;
   unsigned int slashPos = 0;
   while ((chBuff[bytes] = fgetc(fp))) {
-    if (chBuff[bytes] == '/')
+    if (chBuff[bytes] == 32)
+      break;
+    if (chBuff[bytes] == 47)
       slashPos = bytes;
     bytes++;
   }
