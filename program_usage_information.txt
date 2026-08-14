@@ -2,6 +2,9 @@ Usage: SysProcOverview <command> [arguments]
 
 Commands:
   pinfo <pid>    Display detailed information about a specific process.
+                 If the output display the child process name. It mean
+                 the given pid itself is child process.
+
   sysbrief       Display a brief summary of system resource usage.
 
 Examples:

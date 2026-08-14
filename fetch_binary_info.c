@@ -5,7 +5,7 @@
 #include <string.h>
 
 void fetch_binary_info(const char *pid_p_path) {
-  const char *cmdline_fp = combined_strings(pid_p_path, "/cmdline");
+  char *cmdline_fp = combined_strings(pid_p_path, "/cmdline");
 
   FILE *fp = fopen(cmdline_fp, "r");
   if (fp == NULL) {
@@ -20,16 +20,23 @@ void fetch_binary_info(const char *pid_p_path) {
   char chBuff[1024];
   unsigned int bytes = 0;
   unsigned int slashPos = 0;
+  unsigned int isChildProc = 0;
   while ((chBuff[bytes] = fgetc(fp))) {
-    if (chBuff[bytes] == 32)
+    if (chBuff[bytes] == 32) {
+      chBuff[bytes] = 0x0;
+      isChildProc = 1;
       break;
+    }
     if (chBuff[bytes] == 47)
       slashPos = bytes;
     bytes++;
   }
 
-  printf("Name: %s\n", chBuff + (slashPos + 1));
-  printf("Path: %s\n", chBuff);
-
+  *cmdline_fp = 0x0;
   fclose(fp);
+
+  printf("Name: %s (Main Process)\n", chBuff + (slashPos + 1));
+  if (isChildProc)
+    print_childproc_name(pid_p_path);
+  printf("Path: %s\n", chBuff);
 }
