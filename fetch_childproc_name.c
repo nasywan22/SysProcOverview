@@ -2,7 +2,7 @@
 #include <stddef.h>
 #include <stdio.h>
 
-void print_childproc_name(const char *pid_p_path) {
+size_t print_childproc_name(const char *pid_p_path, unsigned int isChild) {
   const char *status_path = combined_strings(pid_p_path, "/status");
   FILE *fp = fopen(status_path, "r");
   fseek(fp, 6, SEEK_SET);
@@ -17,5 +17,10 @@ void print_childproc_name(const char *pid_p_path) {
     bytes++;
   }
 
-  printf("Name: %s (Child Process) \n", childproc_name);
+  if (isChild)
+    printf("Name: %s (Child Process) ", childproc_name);
+
+  printf("<--- %.7s \n", pid_p_path + 6);
+
+  return bytes;
 }

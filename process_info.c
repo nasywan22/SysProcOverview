@@ -1,4 +1,5 @@
 #include "internal_functions.h"
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -15,5 +16,7 @@ void pinfo(char *pid) {
     exit(EXIT_FAILURE);
   }
 
-  fetch_binary_info(pid_proc_path);
+  size_t lengthOfProcName = fetch_binary_info(pid_proc_path);
+
+  calculate_cpu_usage(pid_proc_path, lengthOfProcName);
 }
