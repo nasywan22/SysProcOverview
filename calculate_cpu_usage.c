@@ -3,11 +3,11 @@
 #include <stdio.h>
 #include <string.h>
 
-int fetch_and_sum_total_time(FILE *statfp, int *starttime,
-                             unsigned int lengthOfProcName) {
-  int sum_result = 0;
+float fetch_and_sum_total_time(FILE *statfp, int *starttime,
+                               unsigned int lengthOfProcName) {
+  float sum_result = 0;
   int buffer = 0;
-  size_t fieldPos = 0;
+  size_t fieldPos = 4;
 
   fseek(statfp, 13 + lengthOfProcName, SEEK_SET);
 
@@ -17,12 +17,13 @@ int fetch_and_sum_total_time(FILE *statfp, int *starttime,
     } else if (fieldPos == 22) {
       *starttime = buffer;
       break;
-    } else {
-      fieldPos++;
     }
+
+    fieldPos++;
   }
 
-  return sum_result / 100;
+  sum_result = sum_result / 100;
+  return sum_result;
 }
 
 int fetch_uptime_system(FILE *uptimefp) {
@@ -43,7 +44,7 @@ void calculate_cpu_usage(char *pid_proc_path, unsigned int lengthOfProcName) {
   // Build the path to /proc/[pid]/stat and store it in a local array.
   // ============================================================
   char *statpathtemp = combined_strings(pid_proc_path, "/stat");
-  char statpath[15];
+  char statpath[20];
   strcpy(statpath, statpathtemp);
   *statpathtemp = 0x0;
 

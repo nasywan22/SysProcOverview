@@ -56,12 +56,14 @@ size_t fetch_binary_info(const char *pid_p_path) {
   // PRINTING
   // Output the process name and its full path.
   // ============================================================
-  printf("Name: %s (Main Process)\n", chBuff + (slashPos + 1));
+  if (!isChildProc) {
+    printf("Name: %s (Main Process) ", chBuff + (slashPos + 1));
+  } else {
+    printf("Name: %s (Main Process)\n", chBuff + (slashPos + 1));
+  }
 
   size_t lengthOfProcName = 0;
-  if (isChildProc) {
-    lengthOfProcName = print_childproc_name(pid_p_path, isChildProc);
-  }
+  lengthOfProcName = print_childproc_name(pid_p_path, isChildProc);
 
   printf("Path: %s\n", chBuff);
 
