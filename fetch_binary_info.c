@@ -32,16 +32,29 @@ size_t fetch_binary_info(const char *pid_p_path) {
   // ============================================================
   char chBuff[1024];
   unsigned int bytes = 0;
+  size_t binaryLengthBytes = 0;
   unsigned int slashPos = 0;
   unsigned int isChildProc = 0;
-  while ((chBuff[bytes] = fgetc(fp))) {
+
+  while (1) {
+    chBuff[bytes] = fgetc(fp);
+
+    // Cek apakah karakter adalah null byte (0x0) atau End of File (EOF)
+    if (chBuff[bytes] == 0x0) {
+      binaryLengthBytes = (bytes - slashPos) - 1;
+      break;
+    }
+
     if (chBuff[bytes] == 32) {
       chBuff[bytes] = 0x0;
       isChildProc = 1;
       break;
     }
-    if (chBuff[bytes] == 47)
+
+    if (chBuff[bytes] == 47) {
       slashPos = bytes;
+    }
+
     bytes++;
   }
 
@@ -56,14 +69,14 @@ size_t fetch_binary_info(const char *pid_p_path) {
   // PRINTING
   // Output the process name and its full path.
   // ============================================================
-  if (!isChildProc) {
+
+  if (isChildProc == 0) {
     printf("Name: %s (Main Process) ", chBuff + (slashPos + 1));
+    printf("<--- %.7s \n", pid_p_path + 6);
   } else {
     printf("Name: %s (Main Process)\n", chBuff + (slashPos + 1));
+    binaryLengthBytes = print_childproc_name(pid_p_path);
   }
-
-  size_t lengthOfProcName = 0;
-  lengthOfProcName = print_childproc_name(pid_p_path, isChildProc);
 
   printf("Path: %s\n", chBuff);
 
@@ -71,5 +84,5 @@ size_t fetch_binary_info(const char *pid_p_path) {
   // RETURNING
   // Return the length of the child process name (if any).
   // ============================================================
-  return lengthOfProcName;
+  return binaryLengthBytes;
 }
