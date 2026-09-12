@@ -16,7 +16,11 @@ void pinfo(char *pid) {
     exit(EXIT_FAILURE);
   }
 
+  unsigned int total_page = 0;
+
   size_t lengthOfProcName = fetch_binary_info(pid_proc_path);
 
-  calculate_cpu_usage(pid_proc_path, lengthOfProcName);
+  calculate_cpu_usage(pid_proc_path, lengthOfProcName, &total_page);
+
+  calculate_memory_usage(total_page);
 }

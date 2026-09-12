@@ -4,7 +4,8 @@
 #include <string.h>
 
 float fetch_and_sum_total_time(FILE *statfp, int *starttime,
-                               unsigned int lengthOfProcName) {
+                               unsigned int lengthOfProcName,
+                               unsigned int *total_page) {
   float sum_result = 0;
   int buffer = 0;
   size_t fieldPos = 4;
@@ -16,6 +17,8 @@ float fetch_and_sum_total_time(FILE *statfp, int *starttime,
       sum_result += buffer;
     } else if (fieldPos == 22) {
       *starttime = buffer;
+    } else if (fieldPos == 24) {
+      *total_page = buffer;
       break;
     }
 
@@ -38,7 +41,8 @@ int calculate_and_convert_lifetime_process_in_seconds(FILE *uptimefp,
   return fetch_uptime_system(uptimefp) - (starttime / 100);
 }
 
-void calculate_cpu_usage(char *pid_proc_path, unsigned int lengthOfProcName) {
+void calculate_cpu_usage(char *pid_proc_path, unsigned int lengthOfProcName,
+                         unsigned int *total_page) {
   // ============================================================
   // PREPARATION
   // Build the path to /proc/[pid]/stat and store it in a local array.
@@ -62,8 +66,8 @@ void calculate_cpu_usage(char *pid_proc_path, unsigned int lengthOfProcName) {
   // Calculate total CPU time used, process lifetime in seconds,
   // and average CPU usage percentage.
   // ============================================================
-  float total_time =
-      fetch_and_sum_total_time(statfp, &starttime, lengthOfProcName);
+  float total_time = fetch_and_sum_total_time(statfp, &starttime,
+                                              lengthOfProcName, total_page);
 
   int seconds =
       calculate_and_convert_lifetime_process_in_seconds(uptimefp, starttime);

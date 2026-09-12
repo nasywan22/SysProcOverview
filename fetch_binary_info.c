@@ -17,14 +17,6 @@ size_t fetch_binary_info(const char *pid_p_path) {
   // Open the cmdline file for reading.
   // ============================================================
   FILE *fp = fopen(cmdline_fp, "r");
-  if (fp == NULL) {
-    fprintf(stderr,
-            "File failed to open. Is PID exist?\n"
-            "Detail: Failed to access '%s' -> %s (errno: %d)\n",
-            cmdline_fp, strerror(errno), errno);
-    fclose(fp);
-    exit(EXIT_FAILURE);
-  }
 
   // ============================================================
   // MAIN OPERATION
@@ -39,7 +31,6 @@ size_t fetch_binary_info(const char *pid_p_path) {
   while (1) {
     chBuff[bytes] = fgetc(fp);
 
-    // Cek apakah karakter adalah null byte (0x0) atau End of File (EOF)
     if (chBuff[bytes] == 0x0) {
       binaryLengthBytes = (bytes - slashPos) - 1;
       break;
